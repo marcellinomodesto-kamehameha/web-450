@@ -21,7 +21,8 @@ import { ChartComponent } from '../../../shared/chart/chart.component';
           </select>
         </div>
         <div class="form__actions">
-          <button class="button button--primary" type="submit">Submit</button>
+        <!-- Created a more specific label for the button action of receiving region data. -->
+          <button class="button button--primary" type="submit">Get Data</button>
         </div>
       </form>
 
