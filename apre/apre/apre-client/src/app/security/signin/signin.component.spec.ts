@@ -1,6 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { SigninComponent } from './signin.component';
+import {HttpTestingController} from '@angular/common/http/testing';
+import { environment } from '../../../environments/environment';
 
 describe('SigninComponent', () => {
   let component: SigninComponent;
@@ -48,4 +50,29 @@ describe('SigninComponent', () => {
     expect(component.signinForm.valid).toBeFalse();
     expect(component.errorMessage).toBe('Please fill in all fields.');
   });
+  
+  //Tests that a password is missing the required uppercase letter and number and marks it as invalid
+  it('should reject a password that does not meet the requirements', () => {
+    component.signinForm.controls['password'].setValue('password');
+    
+    expect(component.signinForm.controls['password'].valid).toBeFalse();
+  });
+
+  //Tests that an unsuccessful sign-in API request displays an invalid username and password message.
+  it('should display an error when the sign in api fails', () => {
+    const httpMock = TestBed.inject(HttpTestingController);
+
+    component.signinForm.controls['username'].setValue('testuser');
+    component.signinForm.controls['password'].setValue('Password123');
+
+    component.signin();
+
+    const request = httpMock.expectOne('http://localhost:3000/api/security/signin');
+    request.flush({}, {status: 401, statusText: 'Unauthorized' });
+
+    expect(component.errorMessage).toBe('Invalid username or password');
+    
+  })
+
+
 });
