@@ -93,4 +93,67 @@ router.get('/call-duration-by-date-range', (req, res, next) => {
   }
 });
 
+/**
+ * @description
+ *
+ * GET /performance-by-team
+ *
+ * Fetches agent performance grouped by team.
+ *
+ */
+router.get('/performance-by-team', (req, res, next) => {
+  try {
+    console.log('Fetching agent performance by team');
+
+    mongo(async db => {
+      const data = await db.collection('agentPerformance').aggregate([
+        {
+          $lookup: {
+            from: 'agents',
+            localField: 'agentId',
+            foreignField: 'agentId',
+            as: 'agentDetails'
+          }
+        },
+        {
+          $unwind: '$agentDetails'
+        },
+        {
+          $group: {
+            _id: '$agentDetails.team',
+            totalCallDuration: {
+              $sum: '$callDuration'
+            },
+            agents: {
+              $addToSet: '$agentId'
+            }
+          }
+        },
+        {
+          $project: {
+            _id: 0,
+            team: {
+              $ifNull: ['$_id', 'Unknown Team']
+            },
+            totalCallDuration: 1,
+            agentCount: {
+              $size: '$agents'
+            }
+          }
+        },
+        {
+          $sort: {
+            team: 1
+          }
+        }
+      ]).toArray();
+
+      res.send(data);
+    }, next);
+  } catch (err) {
+    console.error('Error in /performance-by-team', err);
+    next(err);
+  }
+});
+
 module.exports = router;
