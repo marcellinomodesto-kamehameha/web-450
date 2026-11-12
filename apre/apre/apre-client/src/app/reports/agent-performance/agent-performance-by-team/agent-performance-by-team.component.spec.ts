@@ -64,7 +64,8 @@ describe('AgentPerformanceByTeamComponent', () => {
     component.getPerformanceByTeam();
 
     const req = httpMock.expectOne(
-      'http://localhost:3000/api/reports/agent-performance/performance-by-team',
+      'http://localhost:3000/api/reports/agent-performance/performance-by-team'
+      ,
     );
 
     req.flush('Server error', {

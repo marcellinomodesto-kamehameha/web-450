@@ -2,7 +2,6 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { SigninComponent } from './signin.component';
 import {HttpTestingController} from '@angular/common/http/testing';
-import { environment } from '../../../environments/environment';
 
 describe('SigninComponent', () => {
   let component: SigninComponent;
@@ -50,11 +49,11 @@ describe('SigninComponent', () => {
     expect(component.signinForm.valid).toBeFalse();
     expect(component.errorMessage).toBe('Please fill in all fields.');
   });
-  
+
   //Tests that a password is missing the required uppercase letter and number and marks it as invalid
   it('should reject a password that does not meet the requirements', () => {
     component.signinForm.controls['password'].setValue('password');
-    
+
     expect(component.signinForm.controls['password'].valid).toBeFalse();
   });
 
@@ -71,7 +70,7 @@ describe('SigninComponent', () => {
     request.flush({}, {status: 401, statusText: 'Unauthorized' });
 
     expect(component.errorMessage).toBe('Invalid username or password');
-    
+
   })
 
 

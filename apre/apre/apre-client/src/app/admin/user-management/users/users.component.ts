@@ -1,3 +1,9 @@
+/**
+ * Summary: Displays and manages the list of users.
+ * Changes: Added functionality to receive and display a user
+ * creation success message passed through Angular navigation state.
+ * Added a timer to let the message automatically disappears after two seconds.
+ */
 import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../environments/environment';
@@ -16,6 +22,11 @@ import { ConfirmDialogComponent } from "../../../shared/confirm-dialog/confirm-d
 
       @if (deletionMessage) {
         <div class="message message--success">{{ deletionMessage }}</div>
+      }
+        
+      <!-- Display a success notification when a new user has been created. -->
+       @if (creationMessage) {
+        <div class="message message--success">{{ creationMessage }}</div>
       }
       <table class="table">
         <thead>
@@ -57,12 +68,22 @@ export class UsersComponent {
   users: Array<User>;
   showConfirmDialog: boolean = false;
   userIdToDelete: string | null = null;
+ // Stores the success message received after creating a new user.
+  creationMessage: string;
 
   constructor(private http: HttpClient) {
     this.users = [];
     this.dialogHeader = '';
     this.dialogMessage = '';
     this.deletionMessage = '';
+    this.creationMessage = '';
+    // Retrieve the success message passed from UserCreateComponent.
+    this.creationMessage = history.state.message;
+
+  // Automatically clear the creation message after two seconds.
+     setTimeout(() => {
+          this.creationMessage = '';
+        }, 2000);
 
     this.http.get(`${environment.apiBaseUrl}/users`).subscribe({
       next: (users) => {
@@ -102,3 +123,4 @@ export class UsersComponent {
     });
   }
 }
+
